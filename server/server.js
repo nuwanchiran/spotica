@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors')
 const SpotifyWebApi = require("spotify-web-api-node")
 
+require('dotenv').config()
+
 const app = express()
 app.use(cors())
 app.use(express.json());
@@ -12,14 +14,13 @@ app.post('/refresh',async (req,res) => {
 
   const spotifyApi = new SpotifyWebApi({
     redirectUri: "http://localhost:3000",
-    clientId: "0c34f9d23dff4f7caea72df7c617b76a",
-    clientSecret: "56316e0d42e04f59927ea75effa2dcc8",
+    clientId: process.env.clientId,
+    clientSecret: process.env.clientSecret,
     refreshToken,
   })
 
   try {
     const data = await spotifyApi.refreshAccessToken()
-     // console.log(data.body);
 
     const {access_token,expires_in} = data.body
 
@@ -39,8 +40,8 @@ app.post('/login', async (req, res) => {
 
   const spotifyApi = new SpotifyWebApi({
     redirectUri: "http://localhost:3000",
-    clientId: "0c34f9d23dff4f7caea72df7c617b76a",
-    clientSecret: "56316e0d42e04f59927ea75effa2dcc8"
+    clientId: process.env.clientId,
+    clientSecret: process.env.clientSecret,
   })
 
   try {
