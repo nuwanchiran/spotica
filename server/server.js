@@ -8,6 +8,15 @@ const app = express()
 app.use(cors())
 app.use(express.json());
 
+// Routes
+const searchRoute = require("./api/search/SearchRoute")
+app.use("/search", searchRoute )
+
+app.get("/", (req, res)=>{
+  res.send({
+    status: "OK"
+  })
+})
 
 app.post('/refresh',async (req,res) => {
   const refreshToken = req.body.refreshToken
@@ -57,5 +66,6 @@ app.post('/login', async (req, res) => {
     res.sendStatus(400)
   }
 })
+
 
 app.listen(9000);
