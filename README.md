@@ -2,8 +2,8 @@
 
 ## Installation requirements
 
-- `node v14.15.5`
-- `yarn 1.22.11`
+- `node v14.*`
+- `yarn 1.22.*`
 
 ## Start server
 
