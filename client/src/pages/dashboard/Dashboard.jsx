@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import useAuth from '../../hooks/useAuth'
-import { IonApp, IonButton, IonFooter, IonIcon, IonImg, IonItem, IonList, IonSearchbar, IonThumbnail } from '@ionic/react';
+import { IonApp, IonButton, IonCol, IonFooter, IonGrid, IonIcon, IonImg, IonItem, IonLabel, IonList, IonRefresher, IonRefresherContent, IonRow, IonSearchbar, IonThumbnail } from '@ionic/react';
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import SpotifyWebApi from 'spotify-web-api-node';
+import TrackCard from './components/TrackCard';
+import Player from '../../components/player/Player';
+import { power } from 'ionicons/icons';
 
 import './../dashboard/dashboard.css'
-import TrackCard from './components/TrackCard';
 
 const spotifyWebApi = new SpotifyWebApi({
   clientId: process.env.REACT_APP_CLIENT_ID,
@@ -16,21 +18,23 @@ const Dashboard = ({ code }) => {
 
   const [search, setSearch] = useState("")
   const [foundData, setFoundData] = useState([])
+  const [currentTrack, setCurrentTrack] = useState([])
 
   const getMyTopTracks = async () => {
-    if(accessToken){
-      let myTopTracksResponse = await spotifyWebApi.getMyTopTracks({limit:50})
-      
-      let myTopTracks = myTopTracksResponse.body.items.map(track =>{
-          return {
-            name: track.name,
-            artist: track.artists[0].name,
-            uri: track.uri,
-            albumUrl: track.album.images.find(image => image.height < 100).url
-          }
-        })
-        console.log(myTopTracks);
+    if (accessToken) {
+      let myTopTracksResponse = await spotifyWebApi.getMyTopTracks({ limit: 50 })
+
+      let myTopTracks = myTopTracksResponse.body.items.map(track => {
+        return {
+          name: track.name,
+          artist: track.artists[0].name,
+          uri: track.uri,
+          albumUrl: track.album.images.find(image => image.height < 100).url
+        }
+      })
       setFoundData(myTopTracks)
+      if (!currentTrack)
+        setCurrentTrack(myTopTracks[0])
     }
   }
 
@@ -38,11 +42,13 @@ const Dashboard = ({ code }) => {
     if (!accessToken) return;
     await spotifyWebApi.setAccessToken(accessToken)
     await getMyTopTracks()
-
   }, [accessToken])
 
   useEffect(() => {
-    getTracks()
+    if (search.length === 0)
+      getMyTopTracks()
+    else
+      getTracks()
   }, [search, accessToken])
 
   const getTracks = async () => {
@@ -53,7 +59,7 @@ const Dashboard = ({ code }) => {
       let res = await spotifyWebApi.searchTracks(search)
 
       console.log(res.body.tracks);
-      let tracks = res.body.tracks.items.map(track =>{
+      let tracks = res.body.tracks.items.map(track => {
         return {
           name: track.name,
           artist: track.artists[0].name,
@@ -61,7 +67,6 @@ const Dashboard = ({ code }) => {
           albumUrl: track.album.images.find(image => image.height < 100).url
         }
       })
-      console.log(tracks);
       setFoundData(tracks)
 
     } catch (e) {
@@ -69,11 +74,24 @@ const Dashboard = ({ code }) => {
     }
   }
 
+  async function doRefresh(event) {
+    console.log('Begin async operation');
+
+    if (search.length > 0) {
+      await getTracks()
+    } else {
+      await getMyTopTracks()
+    }
+    event.detail.complete()
+    console.log('Finished async operation');
+
+  }
+
   return (
     <IonPage>
       <IonHeader >
         <IonToolbar>
-          <IonButton slot="start" fill="clear" onClick={() => window.location = '/'}>
+          <IonButton shape="round" slot="start" fill="clear" size="large" onClick={() => window.location = '/'}>
             <IonImg src="/assets/spotica-240.png" alt="Spotica Logo" style={{ height: "100%" }} />
           </IonButton>
           <IonSearchbar
@@ -87,28 +105,51 @@ const Dashboard = ({ code }) => {
             value={search}
             onIonChange={e => { console.log(e.detail.value); setSearch(e.detail.value) }}
           />
+          <IonButton shape="round" fill="clear" color="medium" size="large" slot="end" >
+            <IonIcon icon={power} />
+          </IonButton>
         </IonToolbar>
       </IonHeader>
 
       <IonContent
         fullscreen
-        scrollEvents={true}
-        className="dashboard-content"
+        scrollY={false}
       >
-        <IonList lines='none'>
-          {foundData.map((track) => {
-            return (
-              <IonItem>
-                <TrackCard track={track}/>
-              </IonItem>
-            )
-          })}
-
-        </IonList>
+        <IonGrid >
+          <IonRow>
+            <IonCol size="5">
+              <IonContent>
+                <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
+                  <IonRefresherContent
+                    pullingText="Pull to refresh"
+                    refreshingSpinner="circles"
+                    refreshingText="Refreshing..."
+                  >
+                  </IonRefresherContent>
+                </IonRefresher>
+                <IonList
+                  lines='none'
+                >
+                  {foundData.map((track) => {
+                    return (
+                      <IonItem key={track.uri}>
+                        <TrackCard track={track} onClick={() => setCurrentTrack(track)} />
+                      </IonItem>
+                    )
+                  })}
+                </IonList>
+              </IonContent>
+            </IonCol>
+            <IonCol className="ion-justify-content-center">
+              Lyrics
+            </IonCol>
+          </IonRow>
+        </IonGrid>
       </IonContent>
 
       <IonFooter>
-        Footer
+        {/* This player is allowed only for premium Spotify users*/}
+        {accessToken && <Player track={currentTrack} accessToken={accessToken} />}
       </IonFooter>
     </IonPage>
   )
