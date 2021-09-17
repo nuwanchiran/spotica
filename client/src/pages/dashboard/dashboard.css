@@ -2,3 +2,8 @@
     --border-radius: 0px;
     --box-shadow: none;
 }
+
+.dashboard-content {
+    --padding-end: 200px;
+    --padding-start:200px;
+}
