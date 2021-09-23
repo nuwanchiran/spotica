@@ -8,6 +8,7 @@ import Player from '../../components/player/Player';
 import { power } from 'ionicons/icons';
 
 import './../dashboard/dashboard.css'
+import axios from 'axios';
 
 const spotifyWebApi = new SpotifyWebApi({
   clientId: process.env.REACT_APP_CLIENT_ID,
@@ -19,6 +20,7 @@ const Dashboard = ({ code }) => {
   const [search, setSearch] = useState("")
   const [foundData, setFoundData] = useState([])
   const [currentTrack, setCurrentTrack] = useState([])
+  const [lyrics, setLyrics] = useState("")
 
   const getMyTopTracks = async () => {
     if (accessToken) {
@@ -37,6 +39,21 @@ const Dashboard = ({ code }) => {
         setCurrentTrack(myTopTracks[0])
     }
   }
+
+  //For lyrics usage
+  useEffect(async () => {
+    if (!currentTrack) return
+
+    axios.get('http://localhost:9000/lyrics',{
+      params:{
+        track:currentTrack.name,
+        artist:currentTrack.artist
+      }
+    }).then(res => {
+      setLyrics(res.data.lyrics)
+    })
+  }, [currentTrack])
+
 
   useEffect(async () => {
     if (!accessToken) return;
@@ -140,8 +157,11 @@ const Dashboard = ({ code }) => {
                 </IonList>
               </IonContent>
             </IonCol>
-            <IonCol className="ion-justify-content-center">
-              Lyrics nooo
+            <IonCol  className="ion-justify-content-center " style={{ whiteSpace:"pre" }}>
+              
+              <IonContent>
+                   {lyrics}
+              </IonContent>
             </IonCol>
           </IonRow>
         </IonGrid>
