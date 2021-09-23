@@ -141,7 +141,7 @@ const Dashboard = ({ code }) => {
               </IonContent>
             </IonCol>
             <IonCol className="ion-justify-content-center">
-              Lyrics
+              Lyrics nooo
             </IonCol>
           </IonRow>
         </IonGrid>
