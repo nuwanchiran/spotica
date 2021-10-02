@@ -3,7 +3,10 @@ const cors = require('cors')
 const SpotifyWebApi = require("spotify-web-api-node")
 const bodyParser = require("body-parser")
 const lyricsFinder = require("lyrics-finder")
+const GeniusFetcher = require('genius-lyrics-fetcher');
 
+const ACCESS_TOKEN = '2DeKyKgLvsKBpjaHDdsYXID3oGG7Bghdo0O2HdvkIwnkBsggRtZtHEdiOXt4D0i_';
+const lyricsClient = new GeniusFetcher.Client(ACCESS_TOKEN);
 
 require('dotenv').config()
 
@@ -65,8 +68,9 @@ app.post('/login', async (req, res) => {
 })
 
 app.get('/lyrics',async (req,res) => {
-  const lyrics =
-   (await lyricsFinder(req.query.artist,req.query.track)) || "No lyrics found"
+  lyricsResponse = await lyricsClient.fetch(req.query.track, req.query.artist)
+  console.log(lyricsResponse);
+  const lyrics = lyricsResponse.lyrics || "No lyrics found"
 
   res.json({lyrics})
 })
