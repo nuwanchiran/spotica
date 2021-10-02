@@ -179,11 +179,12 @@ const Dashboard = ({ code }) => {
 
               </IonContent>
             </IonCol>
-            <IonCol  className="ion-justify-content-center " style={{ whiteSpace:"pre"}}>
-              
-              <IonContent className="ion-text-center" style={{ height: "100%" }}>
-                  
-                   {lyrics}
+            <IonCol 
+               className="ion-justify-content-center "
+               style={{ whiteSpace:"pre", textAlign:"center", scrollY: "auto", fontFamily: "fangsong", paddingBottom: "40px"}}
+              >
+              <IonContent>
+                {lyrics}
               </IonContent>
             </IonCol>
           </IonRow>
