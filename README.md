@@ -1,4 +1,5 @@
-# Spotica - Song player and lyrics app  (An OAuth2.0 based Application with Spotify API)
+# Spotica - Song player and lyrics app
+##### An OAuth2.0 based Application with Spotify API
 
 ## Installation requirements
 
