@@ -11,6 +11,7 @@
     "genius-lyrics-fetcher": "^2.1.0",
     "lyrics-finder": "^21.7.0",
     "nodemon": "^2.0.12",
+    "solenolyrics": "^5.0.0",
     "spotify-web-api-node": "^5.0.2"
   },
   "scripts": {

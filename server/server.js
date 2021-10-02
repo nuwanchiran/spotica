@@ -4,20 +4,20 @@ const SpotifyWebApi = require("spotify-web-api-node")
 const bodyParser = require("body-parser")
 const lyricsFinder = require("lyrics-finder")
 const GeniusFetcher = require('genius-lyrics-fetcher');
-
-const ACCESS_TOKEN = '2DeKyKgLvsKBpjaHDdsYXID3oGG7Bghdo0O2HdvkIwnkBsggRtZtHEdiOXt4D0i_';
-const lyricsClient = new GeniusFetcher.Client(ACCESS_TOKEN);
+const solenolyrics = require("solenolyrics");
 
 require('dotenv').config()
+
+const lyricsClientGenius = new GeniusFetcher.Client(process.env.GENIUS_ACCESS_TOKEN);
 
 const app = express()
 app.use(cors())
 app.use(express.json())
-app.use(express.urlencoded({extended : true}))
+app.use(express.urlencoded({ extended: true }))
 
 
 
-app.post('/refresh',async (req,res) => {
+app.post('/refresh', async (req, res) => {
   const refreshToken = req.body.refreshToken
 
   const spotifyApi = new SpotifyWebApi({
@@ -30,11 +30,11 @@ app.post('/refresh',async (req,res) => {
   try {
     const data = await spotifyApi.refreshAccessToken()
 
-    const {access_token,expires_in} = data.body
+    const { access_token, expires_in } = data.body
 
     res.status(200).json({
-      accessToken:access_token,
-      expiresIn:expires_in
+      accessToken: access_token,
+      expiresIn: expires_in
     })
 
   } catch (e) {
@@ -67,12 +67,54 @@ app.post('/login', async (req, res) => {
   }
 })
 
-app.get('/lyrics',async (req,res) => {
-  lyricsResponse = await lyricsClient.fetch(req.query.track, req.query.artist)
-  console.log(lyricsResponse);
-  const lyrics = lyricsResponse.lyrics || "No lyrics found"
+app.get('/lyrics', async (req, res) => {
+  let track = req.query.track
+  let artist = req.query.artist
 
-  res.json({lyrics})
+  var lyrics = "No lyrics found"
+  var ok = false
+  try {
+    lyricsClientGeniusResponse = await lyricsClientGenius.fetch(track, artist)
+    console.log(lyricsClientGeniusResponse);
+    lyrics = lyricsClientGeniusResponse.lyrics
+    if (lyrics.length > 0) {
+      ok = true;
+      res.json({ lyrics })
+    }
+  }
+  catch (e) {
+    console.error(e);
+  }
+  try {
+    if (!ok) {
+      // then try lyrics-finder library
+      lyrics = await lyricsFinder(artist, track)
+      console.log("Finding from lyrics-finder: " + lyrics);
+      if (lyrics.length > 0) {
+        ok = true;
+        res.json({ lyrics })
+      }
+    }
+  }
+  catch (e) {
+    console.error(e);
+  }
+  try {
+    if (!ok) {
+      // then try solenolyrics library
+      soleno_Lyrics = await solenolyrics.requestLyricsFor(track);
+      lyrics = soleno_Lyrics
+      console.log("Finding from solenolyrics: " + lyrics);
+      if (lyrics.length > 0) {
+        ok = true;
+        res.json({ lyrics })
+      }
+    }
+  }
+  catch (e) {
+    console.error(e);
+  }
+  res.json({ lyrics })
 })
 
 app.listen(9000);
