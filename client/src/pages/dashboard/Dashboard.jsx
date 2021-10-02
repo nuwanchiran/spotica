@@ -8,6 +8,7 @@ import Player from '../../components/player/Player';
 import { power } from 'ionicons/icons';
 
 import './../dashboard/dashboard.css'
+import axios from 'axios';
 
 const spotifyWebApi = new SpotifyWebApi({
   clientId: process.env.REACT_APP_CLIENT_ID,
@@ -19,6 +20,7 @@ const Dashboard = ({ code }) => {
   const [search, setSearch] = useState("")
   const [foundData, setFoundData] = useState([])
   const [currentTrack, setCurrentTrack] = useState([])
+  const [lyrics, setLyrics] = useState("")
 
   const getMyTopTracks = async () => {
     if (accessToken) {
@@ -38,6 +40,42 @@ const Dashboard = ({ code }) => {
     }
   }
 
+  //NewReleases
+  const getNewReleases = async () => {
+    if (accessToken) {
+      let NewReleasesResponse = await spotifyWebApi.getNewReleases({ limit: 10 })
+
+      console.log("AAAAAAAAAAA " , NewReleasesResponse.body.albums.items)
+      
+      let NewReleases = NewReleasesResponse.body.albums.items.map(track => {
+        return {
+          name: track.name,
+          artist: track.artists[0].name,
+          uri: track.uri,
+          albumUrl: track.album.images.find(image => image.height < 100).url
+        }
+      })
+      setFoundData(NewReleases)
+      if (!currentTrack)
+        setCurrentTrack(NewReleases[0])
+    }
+  }
+
+  //For lyrics usage
+  useEffect(async () => {
+    if (!currentTrack) return
+
+    axios.get('http://localhost:9000/lyrics',{
+      params:{
+        track:currentTrack.name,
+        artist:currentTrack.artist
+      }
+    }).then(res => {
+      setLyrics(res.data.lyrics)
+    })
+  }, [currentTrack])
+
+
   useEffect(async () => {
     if (!accessToken) return;
     await spotifyWebApi.setAccessToken(accessToken)
@@ -46,7 +84,7 @@ const Dashboard = ({ code }) => {
 
   useEffect(() => {
     if (search.length === 0)
-      getMyTopTracks()
+      getNewReleases() || getMyTopTracks()
     else
       getTracks()
   }, [search, accessToken])
@@ -80,7 +118,7 @@ const Dashboard = ({ code }) => {
     if (search.length > 0) {
       await getTracks()
     } else {
-      await getMyTopTracks()
+      await getNewReleases() || getMyTopTracks() 
     }
     event.detail.complete()
     console.log('Finished async operation');
@@ -140,8 +178,11 @@ const Dashboard = ({ code }) => {
                 </IonList>
               </IonContent>
             </IonCol>
-            <IonCol className="ion-justify-content-center">
-              Lyrics
+            <IonCol  className="ion-justify-content-center " style={{ whiteSpace:"pre" }}>
+              
+              <IonContent>
+                   {lyrics}
+              </IonContent>
             </IonCol>
           </IonRow>
         </IonGrid>
