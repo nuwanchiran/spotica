@@ -40,6 +40,27 @@ const Dashboard = ({ code }) => {
     }
   }
 
+  //NewReleases
+  const getNewReleases = async () => {
+    if (accessToken) {
+      let NewReleasesResponse = await spotifyWebApi.getNewReleases({ limit: 10 })
+
+      console.log("AAAAAAAAAAA " , NewReleasesResponse.body.albums.items)
+      
+      let NewReleases = NewReleasesResponse.body.albums.items.map(track => {
+        return {
+          name: track.name,
+          artist: track.artists[0].name,
+          uri: track.uri,
+          albumUrl: track.album.images.find(image => image.height < 100).url
+        }
+      })
+      setFoundData(NewReleases)
+      if (!currentTrack)
+        setCurrentTrack(NewReleases[0])
+    }
+  }
+
   //For lyrics usage
   useEffect(async () => {
     if (!currentTrack) return
@@ -63,7 +84,7 @@ const Dashboard = ({ code }) => {
 
   useEffect(() => {
     if (search.length === 0)
-      getMyTopTracks()
+      getNewReleases() || getMyTopTracks()
     else
       getTracks()
   }, [search, accessToken])
@@ -97,7 +118,7 @@ const Dashboard = ({ code }) => {
     if (search.length > 0) {
       await getTracks()
     } else {
-      await getMyTopTracks()
+      await getNewReleases() || getMyTopTracks() 
     }
     event.detail.complete()
     console.log('Finished async operation');
