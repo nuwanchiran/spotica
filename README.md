@@ -1,4 +1,4 @@
-# Spotica - An OAuth2.0 based Application with Spotify API
+# Spotica - Song player and lyrics app  (An OAuth2.0 based Application with Spotify API)
 
 ## Installation requirements
 
@@ -19,6 +19,6 @@
 
 1. After starting server and client, goto [localhost:3000](http://localhost:3000/)
 2. Click login with Spotify.
-3. Enter spotify login details and submit.
+3. Enter your spotify login details and submit.
 4. If successfull, you will be redirected to the client app again.
 5. Now you are successfully logged in.
