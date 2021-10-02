@@ -1,11 +1,11 @@
 :root {
   --primary-color: rgb(155, 89, 182);
-  --secondery-color: rgba(155, 89, 182, 0.1);
+  --secondary-color: rgba(155, 89, 182, 0.1);
 }
 
 .spotify-login-button-container {
   display: flex;
-  background-color: var(--secondery-color);
+  background-color: var(--secondary-color);
   border-radius: 0.5rem;
   text-decoration: none;
 }
@@ -16,7 +16,7 @@
 
 .btn-spotify-login {
   color: var(--primary-color);
-  background-color: var(--secondery-color);
+  background-color: var(--secondary-color);
   width: 15rem;
   border: none;
   font-size: 1.5rem;
