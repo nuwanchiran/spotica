@@ -118,7 +118,7 @@ const Dashboard = ({ code }) => {
     if (search.length > 0) {
       await getTracks()
     } else {
-      await getNewReleases() || getMyTopTracks() 
+      await getNewReleases() || getMyTopTracks()
     }
     event.detail.complete()
     console.log('Finished async operation');
@@ -176,6 +176,7 @@ const Dashboard = ({ code }) => {
                     )
                   })}
                 </IonList>
+
               </IonContent>
             </IonCol>
             <IonCol 
