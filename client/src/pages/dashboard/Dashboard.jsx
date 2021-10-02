@@ -52,7 +52,7 @@ const Dashboard = ({ code }) => {
           name: track.name,
           artist: track.artists[0].name,
           uri: track.uri,
-          albumUrl: track.album.images.find(image => image.height < 100).url
+          albumUrl: track.images.find(image => image.height < 100).url
         }
       })
       setFoundData(NewReleases)
@@ -178,10 +178,12 @@ const Dashboard = ({ code }) => {
                 </IonList>
               </IonContent>
             </IonCol>
-            <IonCol  className="ion-justify-content-center " style={{ whiteSpace:"pre" }}>
-              
+            <IonCol 
+               className="ion-justify-content-center "
+               style={{ whiteSpace:"pre", textAlign:"center", scrollY: "auto", fontFamily: "fangsong", paddingBottom: "40px"}}
+              >
               <IonContent>
-                   {lyrics}
+                {lyrics}
               </IonContent>
             </IonCol>
           </IonRow>
