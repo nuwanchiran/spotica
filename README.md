@@ -2,7 +2,8 @@
 ##### An OAuth2.0 based Application with Spotify <img src="https://user-images.githubusercontent.com/44756803/135732161-1c585dc5-236e-464a-9032-3b8947d82b9a.png" width="30" height="30" /> API
 
 ## Preview
-![image](https://user-images.githubusercontent.com/44756803/135732391-97adf268-e1bf-4b38-8833-5db7f8dfdb9f.png)
+<!-- ![image](https://user-images.githubusercontent.com/44756803/135732391-97adf268-e1bf-4b38-8833-5db7f8dfdb9f.png) -->
+![image](https://user-images.githubusercontent.com/44756803/135753326-a0700682-d592-4d62-a738-69d4deea1a4b.png)
 
 
 ## Installation requirements
