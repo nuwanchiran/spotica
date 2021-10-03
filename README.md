@@ -11,10 +11,26 @@
 - `node v14.*`
 - `yarn 1.22.*`
 
+## Set up the application in local environment
+1. Clone the app from Github
+2. Go to https://developer.spotify.com and create a project to get a client id and a secret id.
+3. Create a .env file in the root of client folder and add client id and root URL to it.
+
+    REACT_APP_AUTH_URL=https://accounts.spotify.com/authorize
+    REACT_APP_CLIENT_ID=<Client id>
+
+4. Create a .env file in the root of server folder and add client id, secret id and genius access token to it.
+
+    clientId=<Client id>
+    clientSecret=<Secret id>
+    GENIUS_ACCESS_TOKEN=<Genius access token>
+    
+5. Genius access token can be created from https://genius.com/api-clients
+
 ## Start server
 
     yarn install
-    yarn devstart
+    yarn run devstart
 
 ## Start client app
 
@@ -22,7 +38,6 @@
     yarn start
 
 ## How to test
-
 1. After starting server and client, goto [localhost:3000](http://localhost:3000/)
 2. Click login with Spotify.
 3. Enter your spotify login details and submit.
